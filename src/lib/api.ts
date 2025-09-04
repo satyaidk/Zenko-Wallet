@@ -32,33 +32,44 @@ export async function fetchTokenBalances(
   chainId: number = 1
 ): Promise<TokenBalance[]> {
   try {
+    console.log('=== API Debug Info ===');
+    console.log('Address:', address);
+    console.log('Chain ID:', chainId);
+    console.log('API Key exists:', !!COVALENT_API_KEY);
+    console.log('API Key length:', COVALENT_API_KEY ? COVALENT_API_KEY.length : 0);
+    
     if (!COVALENT_API_KEY) {
-      console.warn('Covalent API key not provided. Cannot fetch real token data.');
+      console.error('❌ Covalent API key not provided. Cannot fetch real token data.');
+      console.log('Environment check:', {
+        NEXT_PUBLIC_COVALENT_API_KEY: process.env.NEXT_PUBLIC_COVALENT_API_KEY ? 'exists' : 'missing',
+        COVALENT_API_KEY: COVALENT_API_KEY ? 'exists' : 'missing'
+      });
       return [];
     }
 
     const url = `${COVALENT_BASE_URL}/${chainId}/address/${address}/balances_v2/?key=${COVALENT_API_KEY}&nft=false&no-spam=true&quote-currency=USD`;
-    console.log('Fetching token balances from:', url);
+    console.log('🔗 Fetching from URL:', url);
     
     const response = await fetch(url);
+    console.log('📡 Response status:', response.status, response.statusText);
     
     if (!response.ok) {
-      console.error(`HTTP error! status: ${response.status}`);
+      console.error(`❌ HTTP error! status: ${response.status}`);
       const errorText = await response.text();
       console.error('Error response:', errorText);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     
     const data = await response.json();
-    console.log('API Response:', data);
+    console.log('📊 API Response:', data);
     
     if (data.error) {
-      console.error('API Error:', data.error);
+      console.error('❌ API Error:', data.error);
       throw new Error(`API Error: ${data.error.message || 'Unknown error'}`);
     }
     
     const items = data.data?.items || [];
-    console.log(`Found ${items.length} tokens for address ${address} on chain ${chainId}`);
+    console.log(`✅ Found ${items.length} total tokens for address ${address} on chain ${chainId}`);
     
     // Filter out tokens with zero balance
     const activeItems = items.filter((item: TokenBalance) => {
@@ -66,10 +77,19 @@ export async function fetchTokenBalances(
       return balance > 0;
     });
     
-    console.log(`Found ${activeItems.length} tokens with non-zero balance`);
+    console.log(`💰 Found ${activeItems.length} tokens with non-zero balance`);
+    console.log('Active tokens:', activeItems.map((item: TokenBalance) => ({
+      name: item.contract_name,
+      symbol: item.contract_ticker_symbol,
+      balance: item.balance,
+      value: item.quote
+    })));
+    console.log('=== End API Debug ===');
+    
     return activeItems;
   } catch (error) {
-    console.error('Error fetching token balances:', error);
+    console.error('❌ Error fetching token balances:', error);
+    console.log('=== End API Debug (Error) ===');
     // Return empty array instead of fallback data
     return [];
   }

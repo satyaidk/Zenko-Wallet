@@ -50,7 +50,7 @@ export function Portfolio() {
         <div className="text-sm text-gray-500 space-y-1">
           <p><strong>Address:</strong> {address}</p>
           <p><strong>Chain ID:</strong> {chainId} {chainId === 137 ? '(Polygon)' : chainId === 1 ? '(Ethereum)' : ''}</p>
-          <p><strong>API Status:</strong> {process.env.NEXT_PUBLIC_COVALENT_API_KEY ? 'Configured' : 'Not configured'}</p>
+          <p><strong>API Status:</strong> {typeof window !== 'undefined' && process.env.NEXT_PUBLIC_COVALENT_API_KEY ? 'Configured' : 'Not configured'}</p>
           <p className="mt-2">Check the browser console for detailed API debugging info.</p>
         </div>
       </div>
