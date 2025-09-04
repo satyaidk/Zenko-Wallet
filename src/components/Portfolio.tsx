@@ -45,34 +45,13 @@ export function Portfolio() {
           No Tokens Found
         </h2>
         <p className="text-yellow-600 mb-4">
-          No tokens found in this wallet address.
+          No tokens with non-zero balance found in this wallet address.
         </p>
-        <div className="text-sm text-gray-500">
-          <p>Address: {address}</p>
-          <p>Chain ID: {chainId}</p>
-          <p>Check the browser console for API debugging info.</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Filter out tokens with zero balance
-  const activeBalances = balances.filter(
-    (token) => parseFloat(token.balance) > 0
-  );
-
-  if (activeBalances.length === 0) {
-    return (
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-center">
-        <h2 className="text-lg font-semibold text-blue-800 mb-2">
-          Tokens Found but No Active Balances
-        </h2>
-        <p className="text-blue-600 mb-4">
-          Found {balances.length} tokens but all have zero balance.
-        </p>
-        <div className="text-sm text-gray-500">
-          <p>Address: {address}</p>
-          <p>Chain ID: {chainId}</p>
+        <div className="text-sm text-gray-500 space-y-1">
+          <p><strong>Address:</strong> {address}</p>
+          <p><strong>Chain ID:</strong> {chainId} {chainId === 137 ? '(Polygon)' : chainId === 1 ? '(Ethereum)' : ''}</p>
+          <p><strong>API Status:</strong> {process.env.NEXT_PUBLIC_COVALENT_API_KEY ? 'Configured' : 'Not configured'}</p>
+          <p className="mt-2">Check the browser console for detailed API debugging info.</p>
         </div>
       </div>
     );
@@ -80,8 +59,8 @@ export function Portfolio() {
 
   return (
     <div className="space-y-6">
-      <PortfolioSummary balances={activeBalances} />
-      <TokenList balances={activeBalances} />
+      <PortfolioSummary balances={balances} />
+      <TokenList balances={balances} />
     </div>
   );
 }

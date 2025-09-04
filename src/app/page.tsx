@@ -4,7 +4,6 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
 import { Portfolio } from '@/components/Portfolio';
 import { Header } from '@/components/Header';
-import { DemoMode } from '@/components/DemoMode';
 
 export default function Home() {
   const { isConnected } = useAccount();
@@ -15,19 +14,16 @@ export default function Home() {
       
       <div className="container mx-auto px-4 py-8">
         {!isConnected ? (
-          <div className="space-y-8">
-            <div className="flex flex-col items-center justify-center min-h-[40vh]">
-              <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                  Welcome to Portfolio Wallet
-                </h1>
-                <p className="text-gray-600 mb-8">
-                  Connect your wallet to start tracking your crypto portfolio
-                </p>
-                <ConnectButton />
-              </div>
+          <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                Welcome to Portfolio Wallet
+              </h1>
+              <p className="text-gray-600 mb-8">
+                Connect your wallet to start tracking your crypto portfolio
+              </p>
+              <ConnectButton />
             </div>
-            <DemoMode />
           </div>
         ) : (
           <Portfolio />
