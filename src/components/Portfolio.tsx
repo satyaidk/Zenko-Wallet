@@ -2,7 +2,7 @@
 
 import { useAccount } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
-import { fetchTokenBalances, TokenBalance } from '@/lib/api';
+import { fetchTokenBalances } from '@/lib/api';
 import { TokenList } from './TokenList';
 import { PortfolioSummary } from './PortfolioSummary';
 import { LoadingSpinner } from './LoadingSpinner';

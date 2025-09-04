@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { TokenBalance } from '@/lib/api';
 import { formatCurrency, formatTokenAmount } from '@/lib/utils';
 
@@ -17,9 +18,11 @@ export function TokenCard({ token }: TokenCardProps) {
     <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
       <div className="flex items-center space-x-3 mb-3">
         {token.logo_url ? (
-          <img
+          <Image
             src={token.logo_url}
             alt={token.contract_name}
+            width={32}
+            height={32}
             className="w-8 h-8 rounded-full"
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = 'none';

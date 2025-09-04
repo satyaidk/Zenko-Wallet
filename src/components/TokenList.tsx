@@ -3,7 +3,6 @@
 import { useState, useMemo } from 'react';
 import { TokenBalance } from '@/lib/api';
 import { TokenCard } from './TokenCard';
-import { formatCurrency } from '@/lib/utils';
 
 interface TokenListProps {
   balances: TokenBalance[];
@@ -14,7 +13,7 @@ export function TokenList({ balances }: TokenListProps) {
   const [filter, setFilter] = useState('');
 
   const sortedAndFilteredBalances = useMemo(() => {
-    let filtered = balances.filter(token =>
+    const filtered = balances.filter(token =>
       token.contract_name.toLowerCase().includes(filter.toLowerCase()) ||
       token.contract_ticker_symbol.toLowerCase().includes(filter.toLowerCase())
     );
@@ -51,7 +50,7 @@ export function TokenList({ balances }: TokenListProps) {
           
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
+            onChange={(e) => setSortBy(e.target.value as 'value' | 'name' | 'balance')}
             className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="value">Sort by Value</option>
