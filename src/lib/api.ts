@@ -33,8 +33,8 @@ export async function fetchTokenBalances(
 ): Promise<TokenBalance[]> {
   try {
     if (!COVALENT_API_KEY) {
-      console.warn('Covalent API key not provided. Using fallback data.');
-      return getFallbackTokenData(address);
+      console.warn('Covalent API key not provided. Cannot fetch real token data.');
+      return [];
     }
 
     const url = `${COVALENT_BASE_URL}/${chainId}/address/${address}/balances_v2/?key=${COVALENT_API_KEY}&nft=false&no-spam=true&quote-currency=USD`;
@@ -54,44 +54,27 @@ export async function fetchTokenBalances(
     
     if (data.error) {
       console.error('API Error:', data.error);
-      return getFallbackTokenData(address);
+      throw new Error(`API Error: ${data.error.message || 'Unknown error'}`);
     }
     
     const items = data.data?.items || [];
-    console.log(`Found ${items.length} tokens for address ${address}`);
-    return items;
+    console.log(`Found ${items.length} tokens for address ${address} on chain ${chainId}`);
+    
+    // Filter out tokens with zero balance
+    const activeItems = items.filter((item: TokenBalance) => {
+      const balance = parseFloat(item.balance);
+      return balance > 0;
+    });
+    
+    console.log(`Found ${activeItems.length} tokens with non-zero balance`);
+    return activeItems;
   } catch (error) {
     console.error('Error fetching token balances:', error);
-    return getFallbackTokenData(address);
+    // Return empty array instead of fallback data
+    return [];
   }
 }
 
-// Fallback function to provide sample data when API fails
-function getFallbackTokenData(address: string): TokenBalance[] {
-  console.log('Using fallback token data for address:', address);
-  return [
-    {
-      contract_address: '0x0000000000000000000000000000000000000000',
-      contract_name: 'Ethereum',
-      contract_ticker_symbol: 'ETH',
-      contract_decimals: 18,
-      balance: '1000000000000000000', // 1 ETH
-      quote: 2500.00,
-      quote_rate: 2500.00,
-      logo_url: 'https://cryptologos.cc/logos/ethereum-eth-logo.png'
-    },
-    {
-      contract_address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-      contract_name: 'Dai Stablecoin',
-      contract_ticker_symbol: 'DAI',
-      contract_decimals: 18,
-      balance: '500000000000000000000', // 500 DAI
-      quote: 500.00,
-      quote_rate: 1.00,
-      logo_url: 'https://cryptologos.cc/logos/multi-collateral-dai-dai-logo.png'
-    }
-  ];
-}
 
 export async function fetchTokenPrice(tokenId: string): Promise<number> {
   try {
