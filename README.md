@@ -1,4 +1,4 @@
-# Portfolio Wallet DApp
+# Zenko Wallet DApp
 
 A comprehensive, multi-chain DApp for tracking your cryptocurrency portfolio, NFTs, and managing custom tokens. Connect your wallet and view your assets across multiple blockchain networks.
 
@@ -37,7 +37,7 @@ A comprehensive, multi-chain DApp for tracking your cryptocurrency portfolio, NF
 1. Clone the repository:
 ```bash
 git clone <your-repo-url>
-cd portfolio-wallet
+cd Zenko-Wallet
 ```
 
 2. Install dependencies:
@@ -204,6 +204,9 @@ If you encounter any issues or have questions, please open an issue on GitHub.
 - [ ] Dark mode
 - [ ] Mobile app
 - [ ] DeFi protocol integration
+<<<<<<< HEAD
 - [ ] Price alerts and notifications
 - [ ] Portfolio sharing features
 - [ ] Advanced filtering and sorting options
+=======
+>>>>>>> 32534a6fa96ac9ebf2f8a87cbad10b1f337a4992
