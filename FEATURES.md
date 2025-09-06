@@ -1,4 +1,4 @@
-# Portfolio Wallet DApp - Features
+# Zenko Wallet DApp - Features
 
 ## ✅ Completed Features
 

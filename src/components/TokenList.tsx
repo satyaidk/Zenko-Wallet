@@ -33,25 +33,25 @@ export function TokenList({ balances }: TokenListProps) {
   }, [balances, sortBy, filter]);
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-4 sm:space-y-0">
-        <h2 className="text-2xl font-bold text-gray-900">
+    <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+      <div className="flex flex-col space-y-4 mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
           Token Holdings
         </h2>
         
-        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+        <div className="flex flex-col space-y-3">
           <input
             type="text"
             placeholder="Search tokens..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
           />
           
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'value' | 'name' | 'balance')}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
           >
             <option value="value">Sort by Value</option>
             <option value="name">Sort by Name</option>
@@ -65,7 +65,7 @@ export function TokenList({ balances }: TokenListProps) {
           No tokens found matching your search criteria.
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {sortedAndFilteredBalances.map((token, index) => (
             <TokenCard key={`${token.contract_address}-${index}`} token={token} />
           ))}

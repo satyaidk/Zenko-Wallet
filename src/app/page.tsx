@@ -17,7 +17,7 @@ export default function Home() {
           <div className="flex flex-col items-center justify-center min-h-[60vh]">
             <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                Welcome to Portfolio Wallet
+                Welcome to Zenko Wallet
               </h1>
               <p className="text-gray-600 mb-8">
                 Connect your wallet to start tracking your crypto portfolio
