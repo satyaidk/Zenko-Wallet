@@ -1,21 +1,28 @@
 # Portfolio Wallet DApp
 
-A modern, responsive DApp for tracking your cryptocurrency portfolio. Connect your wallet and view your token balances, portfolio value, and more.
+A comprehensive, multi-chain DApp for tracking your cryptocurrency portfolio, NFTs, and managing custom tokens. Connect your wallet and view your assets across multiple blockchain networks.
 
 ## Features
 
-- 🔗 **Wallet Connection**: Connect with MetaMask, WalletConnect, and other popular wallets
-- 💰 **Portfolio Tracking**: View all your ERC-20 token balances
-- 📊 **Real-time Prices**: Get current token prices and portfolio values
+- 🔗 **Multi-Chain Support**: Support for 18+ blockchain networks including Ethereum, Polygon, Arbitrum, Optimism, Base, BSC, Avalanche, Fantom, and more
+- 💰 **Portfolio Tracking**: View all your ERC-20 token balances with real-time prices
+- ⭐ **Watchlist**: Track your favorite tokens across all supported chains
+- 🎯 **Custom Tokens**: Add and manage custom tokens that aren't automatically detected
+- 💎 **NFT Collection**: View and manage your NFT collection with images and floor prices
+- 🪙 **Stablecoin Support**: Comprehensive support for all major stablecoins across all chains
+- 📊 **Analytics**: Portfolio allocation charts and performance tracking
 - 🎨 **Modern UI**: Beautiful, responsive design with TailwindCSS
-- ⚡ **Fast Performance**: Optimized with React Query for efficient data fetching
+- ⚡ **Fast Performance**: Optimized with React Query and Zustand for efficient data management
+- 💾 **Local Storage**: Persistent storage for watchlists and custom tokens
 
 ## Tech Stack
 
 - **Frontend**: Next.js 14, TypeScript, TailwindCSS
-- **Web3**: wagmi, RainbowKit, ethers.js
+- **Web3**: wagmi, RainbowKit, ethers.js, viem
 - **Data**: Covalent API, CoinGecko API
-- **State Management**: TanStack Query
+- **State Management**: TanStack Query, Zustand
+- **Charts**: Recharts
+- **Icons**: Lucide React
 
 ## Getting Started
 
@@ -90,17 +97,54 @@ npm run dev
 
 ## Usage
 
+### Basic Portfolio Management
 1. **Connect Wallet**: Click the "Connect Wallet" button and select your preferred wallet
-2. **View Portfolio**: Once connected, your token balances and portfolio value will be displayed
-3. **Search & Sort**: Use the search bar to find specific tokens and sort by value, name, or balance
-4. **Real-time Updates**: The portfolio automatically refreshes every 30 seconds
+2. **Select Network**: Use the chain selector to switch between supported networks
+3. **View Portfolio**: Once connected, your token balances and portfolio value will be displayed
+4. **Search & Sort**: Use the search bar to find specific tokens and sort by value, name, or balance
+5. **Real-time Updates**: The portfolio automatically refreshes every 30 seconds
+
+### Advanced Features
+1. **Watchlist**: Click the star icon on any token to add it to your watchlist
+2. **Custom Tokens**: Click "Add Custom Token" to manually add tokens not automatically detected
+3. **NFT Collection**: Switch to the NFTs tab to view your NFT collection with images and floor prices
+4. **Analytics**: View portfolio allocation charts and performance metrics
+5. **Multi-Chain**: Switch between networks to view your assets across different blockchains
 
 ## Supported Networks
 
-- Ethereum Mainnet
-- Polygon
-- Arbitrum
-- Optimism
+- **Ethereum** (Mainnet)
+- **Polygon** (MATIC)
+- **Arbitrum** (One & Nova)
+- **Optimism**
+- **Base**
+- **BSC** (Binance Smart Chain)
+- **Avalanche** (C-Chain)
+- **Fantom**
+- **Cronos**
+- **Moonbeam**
+- **Moonriver**
+- **Harmony One**
+- **Celo**
+- **Gnosis**
+- **Aurora**
+- **Metis**
+- **Polygon zkEVM**
+
+## Supported Stablecoins
+
+The app automatically detects and highlights stablecoins across all supported networks:
+
+- **USDC** - USD Coin
+- **USDT** - Tether
+- **DAI** - Dai Stablecoin
+- **BUSD** - Binance USD
+- **TUSD** - TrueUSD
+- **FRAX** - Frax
+- **LUSD** - Liquity USD
+- **SUSD** - Synthetix USD
+- **GUSD** - Gemini Dollar
+- **USDP** - Pax Dollar
 
 ## Project Structure
 
@@ -114,12 +158,19 @@ src/
 │   ├── Header.tsx      # Navigation header
 │   ├── Portfolio.tsx   # Main portfolio component
 │   ├── PortfolioSummary.tsx
+│   ├── PortfolioCharts.tsx
 │   ├── TokenList.tsx
 │   ├── TokenCard.tsx
+│   ├── TransactionHistory.tsx
+│   ├── ChainSelector.tsx
+│   ├── Watchlist.tsx
+│   ├── CustomTokenManager.tsx
+│   ├── NFTCollection.tsx
 │   └── LoadingSpinner.tsx
 └── lib/               # Utilities and configurations
     ├── wagmi.ts       # Web3 configuration
     ├── api.ts         # API functions
+    ├── store.ts       # Zustand state management
     └── utils.ts       # Utility functions
 ```
 
@@ -141,10 +192,18 @@ If you encounter any issues or have questions, please open an issue on GitHub.
 
 ## Roadmap
 
-- [ ] NFT support (ERC-721, ERC-1155)
-- [ ] Portfolio performance tracking
-- [ ] Export portfolio data
+- [x] Multi-chain support (18+ networks)
+- [x] NFT support (ERC-721, ERC-1155)
+- [x] Watchlist functionality
+- [x] Custom token management
+- [x] Comprehensive stablecoin support
+- [x] Portfolio analytics and charts
+- [ ] Portfolio performance tracking over time
+- [ ] Export portfolio data (CSV, PDF)
 - [ ] Multiple wallet support
 - [ ] Dark mode
 - [ ] Mobile app
 - [ ] DeFi protocol integration
+- [ ] Price alerts and notifications
+- [ ] Portfolio sharing features
+- [ ] Advanced filtering and sorting options

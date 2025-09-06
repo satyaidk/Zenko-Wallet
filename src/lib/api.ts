@@ -291,3 +291,183 @@ export async function fetchTransactions(
     return [];
   }
 }
+
+// NFT interfaces
+export interface NFTData {
+  contract_address: string;
+  contract_name: string;
+  contract_ticker_symbol: string;
+  contract_decimals: number;
+  supports_erc: string[];
+  logo_url?: string;
+  type: string;
+  nft_data?: Array<{
+    token_id: string;
+    token_balance: string;
+    token_url?: string;
+    external_data?: {
+      name?: string;
+      description?: string;
+      image?: string;
+      image_256?: string;
+      image_512?: string;
+      image_1024?: string;
+      animation_url?: string;
+      external_url?: string;
+      attributes?: Array<{
+        trait_type: string;
+        value: string | number;
+      }>;
+      floor_price_usd?: number;
+    };
+  }>;
+}
+
+// Comprehensive stablecoin mapping across all chains
+export const STABLECOIN_ADDRESSES: Record<number, Record<string, string>> = {
+  // Ethereum
+  1: {
+    'USDC': '0xa0b86a33e6ba0e0e5c4c4b4b4b4b4b4b4b4b4b4b',
+    'USDT': '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    'DAI': '0x6b175474e89094c44da98b954eedeac495271d0f',
+    'BUSD': '0x4fabb145d64652a948d72533023f6e7a623c7c53',
+    'TUSD': '0x0000000000085d4780b73119b644ae5ecd22b376',
+    'USDP': '0x8e870d67f660d95d5be530380d0ec0bd388289e1',
+    'FRAX': '0x853d955acef822db058eb8505911ed77f175b99e',
+    'LUSD': '0x5f98805a4e8be255a32880fdec7f6728c6568ba0',
+    'SUSD': '0x57ab1ec28d129707052df4df418d58a2d46d5f51',
+    'GUSD': '0x056fd409e1d7a124bd7017459dfea2f387b6d5cd',
+  },
+  // Polygon
+  137: {
+    'USDC': '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
+    'USDT': '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
+    'DAI': '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063',
+    'BUSD': '0x9c9e5fd8bbc25984b178fdce6117defa39d2db39',
+    'FRAX': '0x45c32fa6df82ead1e2ef74d17b76547eddfaff89',
+    'TUSD': '0x2e1ad108ff1d8c782fcbbb89aad783ac49586756',
+  },
+  // Arbitrum
+  42161: {
+    'USDC': '0xaf88d065e77c8cc2239327c5edb3a432268e5831',
+    'USDT': '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9',
+    'DAI': '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1',
+    'FRAX': '0x17fc002b466eec40dae837fc4be5c67993ddbd6f',
+    'LUSD': '0x93b346b6bc2548da6a1e7d98e9a421b42541425b',
+  },
+  // Optimism
+  10: {
+    'USDC': '0x0b2c639c533813f4aa9d7837caf62653d097ff85',
+    'USDT': '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58',
+    'DAI': '0xda10009cbd5d07dd0cecc66161fc93d7c9000da1',
+    'FRAX': '0x2e3d870790dc77a83dd1d18184acc7439a53f475',
+    'LUSD': '0xc40f949f8a4e094d1b49a23ea9241d289b7b2819',
+  },
+  // Base
+  8453: {
+    'USDC': '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+    'DAI': '0x50c5725949a6f0c72e6c4a641f24049a917db0cb',
+  },
+  // BSC
+  56: {
+    'USDC': '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d',
+    'USDT': '0x55d398326f99059ff775485246999027b3197955',
+    'BUSD': '0xe9e7cea3dedca5984780bafc599bd69add087d56',
+    'DAI': '0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3',
+    'TUSD': '0x14016e85a25aeb13065688cafb43044c2ef86784',
+    'FRAX': '0x90c97f71e18723b0cf0dfa30ee176ab653e89f40',
+  },
+  // Avalanche
+  43114: {
+    'USDC': '0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e',
+    'USDT': '0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7',
+    'DAI': '0xd586e7f844cea2f87f50152665bcbc2c279d8d70',
+    'FRAX': '0xd24c2ad096400b6fbcd2ad8b24e7acbc21a1da64',
+    'TUSD': '0x1c20e891bab6b1727d14da358fae2984ed9b59eb',
+  },
+  // Fantom
+  250: {
+    'USDC': '0x04068da6c83afcfa0e13ba15a6696662335d5b75',
+    'USDT': '0x049d68029688eabf473097a2fc38ef61633a3c7a',
+    'DAI': '0x8d11ec38a3eb5e956b052f67da8bdc9bef8abf3e',
+    'FRAX': '0xdc301622e621166bd8e82f2ca0a26c13ad0be355',
+    'TUSD': '0x9879abdea01a879644185341f7af7d8343559bca',
+  },
+  // Cronos
+  25: {
+    'USDC': '0xc21223249ca28397b4b6541dffaecc539bff0c59',
+    'USDT': '0x66e428c3f67a68878562e79a0234c1f83c208770',
+    'DAI': '0xf2001b145b43032aaf5ee2884e456ccd805f677d',
+  },
+};
+
+export function isStablecoin(contractAddress: string, chainId: number): boolean {
+  const stablecoins = STABLECOIN_ADDRESSES[chainId];
+  if (!stablecoins) return false;
+  
+  return Object.values(stablecoins).some(addr => 
+    addr.toLowerCase() === contractAddress.toLowerCase()
+  );
+}
+
+export function getStablecoinSymbol(contractAddress: string, chainId: number): string | null {
+  const stablecoins = STABLECOIN_ADDRESSES[chainId];
+  if (!stablecoins) return null;
+  
+  for (const [symbol, address] of Object.entries(stablecoins)) {
+    if (address.toLowerCase() === contractAddress.toLowerCase()) {
+      return symbol;
+    }
+  }
+  return null;
+}
+
+export async function fetchNFTs(
+  address: string,
+  chainId: number = 1
+): Promise<NFTData[]> {
+  try {
+    console.log('=== NFT API Debug Info ===');
+    console.log('Address:', address);
+    console.log('Chain ID:', chainId);
+    console.log('API Key exists:', !!COVALENT_API_KEY);
+    
+    if (!COVALENT_API_KEY) {
+      console.error('❌ Covalent API key not provided. Cannot fetch NFT data.');
+      return [];
+    }
+
+    const url = `${COVALENT_BASE_URL}/${chainId}/address/${address}/balances_v2/?key=${COVALENT_API_KEY}&nft=true&no-spam=true`;
+    console.log('🔗 Fetching NFTs from URL:', url);
+    
+    const response = await fetch(url);
+    console.log('📡 Response status:', response.status, response.statusText);
+    
+    if (!response.ok) {
+      console.error(`❌ HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Error response:', errorText);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('📊 NFT API Response:', data);
+    
+    if (data.error) {
+      console.error('❌ API Error:', data.error);
+      throw new Error(`API Error: ${data.error.message || 'Unknown error'}`);
+    }
+    
+    const items = data.data?.items || [];
+    const nftItems = items.filter((item: NFTData) => item.type === 'nft' && item.nft_data && item.nft_data.length > 0);
+    
+    console.log(`✅ Found ${nftItems.length} NFT collections for address ${address} on chain ${chainId}`);
+    console.log('=== End NFT API Debug ===');
+    
+    return nftItems;
+  } catch (error) {
+    console.error('❌ Error fetching NFTs:', error);
+    console.log('=== End NFT API Debug (Error) ===');
+    return [];
+  }
+}
