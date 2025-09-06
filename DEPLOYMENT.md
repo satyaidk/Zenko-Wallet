@@ -1,4 +1,4 @@
-# Deployment Guide for Portfolio Wallet DApp
+# Deployment Guide for Zenko Wallet DApp
 
 ## Environment Variables Setup
 

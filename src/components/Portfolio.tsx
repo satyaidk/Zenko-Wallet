@@ -73,8 +73,8 @@ export function Portfolio() {
       case 'portfolio':
         return (
           <div className="space-y-6">
-            <PortfolioSummary balances={balances} />
-            <TokenList balances={balances} />
+            <PortfolioSummary balances={balances || []} />
+            <TokenList balances={balances || []} />
           </div>
         );
       case 'watchlist':
@@ -84,7 +84,7 @@ export function Portfolio() {
       case 'transactions':
         return <TransactionHistory />;
       case 'charts':
-        return <PortfolioCharts balances={balances} />;
+        return <PortfolioCharts balances={balances || []} />;
       default:
         return null;
     }
