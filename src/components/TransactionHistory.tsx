@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useAccount, useChainId } from 'wagmi';
 import { useQuery } from '@tanstack/react-query';
 import { fetchTransactions, Transaction, getExplorerUrl, getExplorerName } from '@/lib/api';
@@ -113,6 +114,7 @@ function analyzeTransaction(tx: Transaction, userAddress: string, chainId: numbe
 export function TransactionHistory({ className = '' }: TransactionHistoryProps) {
   const { address } = useAccount();
   const chainId = useChainId();
+  const [activeFilter, setActiveFilter] = useState<'all' | 'send' | 'receive' | 'swap' | 'bridge'>('all');
 
   const { data: transactions, isLoading, error } = useQuery({
     queryKey: ['transactions', address, chainId],
@@ -187,6 +189,39 @@ export function TransactionHistory({ className = '' }: TransactionHistoryProps) 
     }
   };
 
+  // Filter transactions based on active filter
+  const filteredTransactions = transactions?.filter(tx => {
+    if (activeFilter === 'all') return true;
+    const analysis = analyzeTransaction(tx, address!, chainId);
+    return analysis.type === activeFilter;
+  }) || [];
+
+  // Get transaction counts for each type
+  const getTransactionCounts = () => {
+    if (!transactions) return { all: 0, send: 0, receive: 0, swap: 0, bridge: 0 };
+    
+    const counts = { all: transactions.length, send: 0, receive: 0, swap: 0, bridge: 0 };
+    
+    transactions.forEach(tx => {
+      const analysis = analyzeTransaction(tx, address!, chainId);
+      if (analysis.type in counts) {
+        counts[analysis.type as keyof typeof counts]++;
+      }
+    });
+    
+    return counts;
+  };
+
+  const transactionCounts = getTransactionCounts();
+
+  const filterButtons = [
+    { id: 'all', label: 'All', icon: RefreshCw, count: transactionCounts.all },
+    { id: 'send', label: 'Send', icon: ArrowUpRight, count: transactionCounts.send },
+    { id: 'receive', label: 'Receive', icon: ArrowDownLeft, count: transactionCounts.receive },
+    { id: 'swap', label: 'Swap', icon: ArrowRightLeft, count: transactionCounts.swap },
+    { id: 'bridge', label: 'Bridge', icon: Zap, count: transactionCounts.bridge },
+  ];
+
 
   if (isLoading) {
     return (
@@ -238,94 +273,140 @@ export function TransactionHistory({ className = '' }: TransactionHistoryProps) 
           Recent transactions for your wallet
         </p>
       </div>
+
+      {/* Filter Buttons */}
+      <div className="p-4 border-b border-gray-200">
+        <div className="flex flex-wrap gap-2">
+          {filterButtons.map((filter) => {
+            const Icon = filter.icon;
+            const isActive = activeFilter === filter.id;
+            return (
+              <button
+                key={filter.id}
+                onClick={() => setActiveFilter(filter.id as 'all' | 'send' | 'receive' | 'swap' | 'bridge')}
+                className={`
+                  flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                  ${isActive
+                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-200'
+                  }
+                `}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{filter.label}</span>
+                <span className={`
+                  px-2 py-0.5 rounded-full text-xs
+                  ${isActive ? 'bg-blue-200 text-blue-800' : 'bg-gray-200 text-gray-600'}
+                `}>
+                  {filter.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
       
       <div className="divide-y divide-gray-200">
-        {transactions.map((tx) => {
-          const analysis = analyzeTransaction(tx, address!, chainId);
-          const explorerUrl = getExplorerUrl(chainId, tx.tx_hash);
-          const explorerName = getExplorerName(chainId);
-          
-          return (
-            <div key={tx.tx_hash} className="p-4 hover:bg-gray-50 transition-colors">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100">
-                    {getTransactionIcon(analysis)}
+        {filteredTransactions.length === 0 ? (
+          <div className="p-8 text-center">
+            <div className="text-gray-500 mb-2">
+              {activeFilter === 'all' ? 'No transactions found' : `No ${activeFilter} transactions found`}
+            </div>
+            <p className="text-sm text-gray-400">
+              {activeFilter === 'all' 
+                ? 'No recent transactions for this wallet address.'
+                : `Try selecting a different filter to see other transaction types.`
+              }
+            </p>
+          </div>
+        ) : (
+          filteredTransactions.map((tx) => {
+            const analysis = analyzeTransaction(tx, address!, chainId);
+            const explorerUrl = getExplorerUrl(chainId, tx.tx_hash);
+            const explorerName = getExplorerName(chainId);
+            
+            return (
+              <div key={tx.tx_hash} className="p-4 hover:bg-gray-50 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100">
+                      {getTransactionIcon(analysis)}
+                    </div>
+                    <div>
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium text-gray-900">
+                          {getTransactionLabel(analysis)}
+                        </span>
+                        {tx.successful ? (
+                          <CheckCircle className="w-4 h-4 text-green-500" />
+                        ) : (
+                          <XCircle className="w-4 h-4 text-red-500" />
+                        )}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {formatDistanceToNow(new Date(tx.block_signed_at), { addSuffix: true })}
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="flex items-center space-x-2">
-                      <span className="font-medium text-gray-900">
-                        {getTransactionLabel(analysis)}
-                      </span>
-                      {tx.successful ? (
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                      ) : (
-                        <XCircle className="w-4 h-4 text-red-500" />
-                      )}
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      {formatDistanceToNow(new Date(tx.block_signed_at), { addSuffix: true })}
-                    </div>
+                  
+                  <div className="text-right">
+                    {analysis.primaryToken ? (
+                      <div>
+                        <div className={`font-medium ${getTransactionColor(analysis)}`}>
+                          {analysis.type === 'send' ? '-' : analysis.type === 'receive' ? '+' : ''}
+                          {formatValue(analysis.primaryToken.amount, analysis.primaryToken.decimals)} {analysis.primaryToken.symbol}
+                        </div>
+                        {analysis.primaryToken.value > 0 && (
+                          <div className="text-sm text-gray-600">
+                            {formatUSD(analysis.primaryToken.value)}
+                          </div>
+                        )}
+                        {analysis.secondaryToken && (
+                          <div className="text-sm text-gray-500">
+                            → {formatValue(analysis.secondaryToken.amount, analysis.secondaryToken.decimals)} {analysis.secondaryToken.symbol}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-sm text-gray-500">
+                        Contract Interaction
+                      </div>
+                    )}
                   </div>
                 </div>
                 
-                <div className="text-right">
-                  {analysis.primaryToken ? (
-                    <div>
-                      <div className={`font-medium ${getTransactionColor(analysis)}`}>
-                        {analysis.type === 'send' ? '-' : analysis.type === 'receive' ? '+' : ''}
-                        {formatValue(analysis.primaryToken.amount, analysis.primaryToken.decimals)} {analysis.primaryToken.symbol}
-                      </div>
-                      {analysis.primaryToken.value > 0 && (
-                        <div className="text-sm text-gray-600">
-                          {formatUSD(analysis.primaryToken.value)}
-                        </div>
-                      )}
-                      {analysis.secondaryToken && (
-                        <div className="text-sm text-gray-500">
-                          → {formatValue(analysis.secondaryToken.amount, analysis.secondaryToken.decimals)} {analysis.secondaryToken.symbol}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-sm text-gray-500">
-                      Contract Interaction
-                    </div>
-                  )}
+                <div className="mt-3 flex items-center justify-between text-sm text-gray-500">
+                  <div className="flex items-center space-x-4">
+                    <span>
+                      From: {formatAddress(tx.from_address)}
+                    </span>
+                    <span>
+                      To: {formatAddress(tx.to_address)}
+                    </span>
+                  </div>
+                  <a
+                    href={explorerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-1 text-blue-600 hover:text-blue-800 transition-colors"
+                  >
+                    <span>View on {explorerName}</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
                 </div>
+                
+                {tx.gas_quote > 0 && (
+                  <div className="mt-2 text-xs text-gray-500">
+                    Gas: {formatUSD(tx.gas_quote)}
+                  </div>
+                )}
               </div>
-              
-              <div className="mt-3 flex items-center justify-between text-sm text-gray-500">
-                <div className="flex items-center space-x-4">
-                  <span>
-                    From: {formatAddress(tx.from_address)}
-                  </span>
-                  <span>
-                    To: {formatAddress(tx.to_address)}
-                  </span>
-                </div>
-                <a
-                  href={explorerUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center space-x-1 text-blue-600 hover:text-blue-800 transition-colors"
-                >
-                  <span>View on {explorerName}</span>
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              </div>
-              
-              {tx.gas_quote > 0 && (
-                <div className="mt-2 text-xs text-gray-500">
-                  Gas: {formatUSD(tx.gas_quote)}
-                </div>
-              )}
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
       
-      {transactions.length >= 20 && (
+      {filteredTransactions.length >= 20 && (
         <div className="p-4 border-t border-gray-200 text-center">
           <button className="text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors">
             Load More Transactions
