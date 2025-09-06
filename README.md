@@ -1,4 +1,4 @@
-# Portfolio Wallet DApp
+# Zenko Wallet DApp
 
 A modern, responsive DApp for tracking your cryptocurrency portfolio. Connect your wallet and view your token balances, portfolio value, and more.
 
@@ -30,7 +30,7 @@ A modern, responsive DApp for tracking your cryptocurrency portfolio. Connect yo
 1. Clone the repository:
 ```bash
 git clone <your-repo-url>
-cd portfolio-wallet
+cd Zenko-Wallet
 ```
 
 2. Install dependencies:
