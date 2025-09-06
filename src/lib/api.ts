@@ -20,6 +20,49 @@ export interface PortfolioData {
   items: TokenBalance[];
 }
 
+export interface TokenTransfer {
+  contract_address: string;
+  contract_name: string;
+  contract_ticker_symbol: string;
+  contract_decimals: number;
+  from_address: string;
+  to_address: string;
+  balance: string;
+  balance_quote: number;
+  quote_rate: number;
+  logo_url?: string;
+}
+
+export interface Transaction {
+  block_signed_at: string;
+  block_height: number;
+  tx_hash: string;
+  tx_offset: number;
+  successful: boolean;
+  from_address: string;
+  from_address_label?: string;
+  to_address: string;
+  to_address_label?: string;
+  value: string;
+  value_quote: number;
+  gas_offered: number;
+  gas_spent: number;
+  gas_price: number;
+  gas_quote: number;
+  gas_quote_rate: number;
+  log_events: unknown[];
+  transfers?: TokenTransfer[];
+}
+
+export interface TransactionData {
+  address: string;
+  updated_at: string;
+  next_update_at: string;
+  quote_currency: string;
+  chain_id: number;
+  items: Transaction[];
+}
+
 // Covalent API configuration
 const COVALENT_API_KEY = process.env.NEXT_PUBLIC_COVALENT_API_KEY || '';
 const COVALENT_BASE_URL = 'https://api.covalenthq.com/v1';
@@ -167,4 +210,84 @@ export const TOKEN_MAPPING: Record<string, string> = {
 
 export function getTokenId(contractAddress: string): string {
   return TOKEN_MAPPING[contractAddress.toLowerCase()] || 'ethereum';
+}
+
+export function getExplorerUrl(chainId: number, txHash: string): string {
+  const explorers: Record<number, string> = {
+    1: `https://etherscan.io/tx/${txHash}`, // Ethereum
+    137: `https://polygonscan.com/tx/${txHash}`, // Polygon
+    10: `https://optimistic.etherscan.io/tx/${txHash}`, // Optimism
+    42161: `https://arbiscan.io/tx/${txHash}`, // Arbitrum
+    56: `https://bscscan.com/tx/${txHash}`, // BSC
+    250: `https://ftmscan.com/tx/${txHash}`, // Fantom
+    43114: `https://snowtrace.io/tx/${txHash}`, // Avalanche
+    25: `https://cronoscan.com/tx/${txHash}`, // Cronos
+  };
+  
+  return explorers[chainId] || explorers[1]; // Default to Etherscan
+}
+
+export function getExplorerName(chainId: number): string {
+  const names: Record<number, string> = {
+    1: 'Etherscan',
+    137: 'Polygonscan',
+    10: 'Optimistic Etherscan',
+    42161: 'Arbiscan',
+    56: 'BSCScan',
+    250: 'FTMScan',
+    43114: 'Snowtrace',
+    25: 'Cronoscan',
+  };
+  
+  return names[chainId] || 'Etherscan';
+}
+
+export async function fetchTransactions(
+  address: string,
+  chainId: number = 1,
+  pageSize: number = 50
+): Promise<Transaction[]> {
+  try {
+    console.log('=== Transaction API Debug Info ===');
+    console.log('Address:', address);
+    console.log('Chain ID:', chainId);
+    console.log('Page Size:', pageSize);
+    console.log('API Key exists:', !!COVALENT_API_KEY);
+    
+    if (!COVALENT_API_KEY) {
+      console.error('❌ Covalent API key not provided. Cannot fetch transaction data.');
+      return [];
+    }
+
+    const url = `${COVALENT_BASE_URL}/${chainId}/address/${address}/transactions_v3/?key=${COVALENT_API_KEY}&page-size=${pageSize}&quote-currency=USD&no-logs=false`;
+    console.log('🔗 Fetching transactions from URL:', url);
+    
+    const response = await fetch(url);
+    console.log('📡 Response status:', response.status, response.statusText);
+    
+    if (!response.ok) {
+      console.error(`❌ HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Error response:', errorText);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('📊 Transaction API Response:', data);
+    
+    if (data.error) {
+      console.error('❌ API Error:', data.error);
+      throw new Error(`API Error: ${data.error.message || 'Unknown error'}`);
+    }
+    
+    const items = data.data?.items || [];
+    console.log(`✅ Found ${items.length} transactions for address ${address} on chain ${chainId}`);
+    console.log('=== End Transaction API Debug ===');
+    
+    return items;
+  } catch (error) {
+    console.error('❌ Error fetching transactions:', error);
+    console.log('=== End Transaction API Debug (Error) ===');
+    return [];
+  }
 }
