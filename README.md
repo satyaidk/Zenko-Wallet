@@ -1,4 +1,4 @@
-# Zenko Wallet DApp
+# Zenko Wallet DApp 🦊
 
 A comprehensive, multi-chain DApp for tracking your cryptocurrency portfolio, NFTs, and managing custom tokens. Connect your wallet and view your assets across multiple blockchain networks.
 
@@ -182,9 +182,6 @@ src/
 4. Add tests if applicable
 5. Submit a pull request
 
-## License
-
-MIT License - see LICENSE file for details
 
 ## Support
 
